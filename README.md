@@ -17,3 +17,10 @@ $ npm start
 Summary
 
 - [CONFIGURATION](/doc/CONFIGURATION.md)
+
+
+### Tests
+
+```
+$ npm test
+```
