@@ -1,0 +1,33 @@
+{
+    "api": {
+        "openapi": "3.0.1",
+        "info": {
+            "version": "1.3.0",
+            "title": "Tamia",
+            "description": "Tamia API demo",
+            "termsOfService": "http://api_url/terms/",
+            "contact": {
+                "name": "Tamia Team",
+                "email": "hello@tamia.com",
+                "url": "https://tamia.com/"
+            },
+            "license": {
+                "name": "Apache 2.0",
+                "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+            }
+        },
+        "tags": []
+    },
+
+    "models": [
+        "/config/models/hello.json"
+    ],
+
+    "routes": [
+        "/config/routes/hello.json"
+    ],
+
+    "controllers": [
+        "/src/controllers/hello"
+    ]
+}

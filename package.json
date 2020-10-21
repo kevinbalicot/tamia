@@ -1,0 +1,29 @@
+{
+  "name": "@tamia/tamia",
+  "version": "0.1.0",
+  "description": "API REST server",
+  "main": "server.js",
+  "scripts": {
+    "test": "mocha --recursive \"./**/test/**/*.spec.js\"",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.beelab.tk:tamia/tamia.git"
+  },
+  "keywords": [
+    "API"
+  ],
+  "author": "Kevin Balicot <kevinbalicot@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@apidevtools/swagger-parser": "^10.0.2",
+    "connect": "^3.7.0",
+    "dotenv": "^8.2.0",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "mocha": "^8.2.0",
+    "node-fetch": "^2.6.1"
+  }
+}

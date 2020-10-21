@@ -1,0 +1,22 @@
+{
+    "paths": {
+        "/hello": {
+            "get": {
+                "description": "Get hello",
+                "operationId": "getHello",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schema/Hello"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
