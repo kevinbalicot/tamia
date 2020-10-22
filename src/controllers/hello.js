@@ -1,7 +1,7 @@
-const jsonWriter = require('./../../modules/common/services/writers/json-writer');
+const { send } = require('./../../modules/common/services/controller');
 
 module.exports = {
     getHello(req, res) {
-        return jsonWriter.sendJson(res, { message: 'Hello World!' });
+        return send(req, res, { message: 'Hello World!' });
     },
 }

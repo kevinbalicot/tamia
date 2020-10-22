@@ -7,10 +7,11 @@
                 "parameters": [],
                 "responses": {
                     "200": {
+                        "description": "Get hello",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schema/Hello"
+                                    "$ref": "#/components/schemas/Hello"
                                 }
                             }
                         }

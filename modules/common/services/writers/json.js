@@ -10,7 +10,7 @@ module.exports = {
      * @param {string|null} [statusMessage=null]
      * @return {ServerResponse}
      */
-    writeJson(res, data, status = 200, statusMessage = null) {
+    write(res, data, status = 200, statusMessage = null) {
         if (!(res instanceof http.ServerResponse)) {
             throw new Error(`"res" parameter has to be instance of ServerResponse.`);
         }
@@ -33,21 +33,5 @@ module.exports = {
         res.write(json);
 
         return res;
-    },
-
-    /**
-     * Write json into response and end it
-     *
-     * @param {ServerResponse} res
-     * @param {Object|Array} data
-     * @param {number} [status=200]
-     * @param {string|null} [statusMessage=null]
-     * @return {ServerResponse}
-     */
-    sendJson(res, data, status = 200, statusMessage = null) {
-        res = this.writeJson(res, data, status, statusMessage);
-        res.end();
-
-        return res;
-    },
+    }
 }

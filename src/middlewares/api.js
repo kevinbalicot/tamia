@@ -4,13 +4,18 @@ const { matchRoute } = require('./../../modules/common/services/route-matcher');
 module.exports = async function(config, controllers, prefix = '') {
     let api = {};
     try {
-        api = await SwaggerParser.parse(config);
+        const parser = new SwaggerParser();
+        api = await parser.validate(config);
     } catch (e) {
-        console.error(e);
         throw new Error(e);
     }
 
     return function(req, res, next) {
+        if (req.url === '/doc') {
+            res.setHeader('Content-Type', 'application/json');
+            return res.end(JSON.stringify(api));
+        }
+
         for (let path in api.paths) {
             if (path && matchRoute(req, `${prefix}${path}`) && api.paths[path][req.method.toLowerCase()]) {
                 const route = api.paths[path][req.method.toLowerCase()];
