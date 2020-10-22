@@ -20,14 +20,17 @@
     },
 
     "models": [
-        "/config/models/hello.json"
+        "/config/models/hello.json",
+        "/config/models/demo.json"
     ],
 
     "routes": [
-        "/config/routes/hello.json"
+        "/config/routes/hello.json",
+        "/config/routes/demo.json"
     ],
 
     "controllers": [
-        "/src/controllers/hello"
+        "/src/controllers/hello",
+        "/src/controllers/demo"
     ]
 }

@@ -1,0 +1,72 @@
+{
+    "paths": {
+        "/items": {
+            "get": {
+                "description": "Get items",
+                "operationId": "getItems",
+                "parameters": [
+                    {
+                        "name": "orderBy",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": ["desc", "asc"]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get items",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Item"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
+            "post": {
+                "description": "Post new item",
+                "operationId": "postItem",
+                "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Item"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "New item",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Item"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad item data from request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DemoError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -3,6 +3,7 @@ require('dotenv').config();
 const http = require('http');
 const connect = require('connect');
 const morgan = require('morgan');
+const bodyParser = require('body-parser');
 
 const { NODE_PORT = 8080 } = process.env;
 const app = connect();
@@ -13,6 +14,7 @@ const controllers = Object.assign({}, ...config.controllers.map(file => require(
 const apiConfig = Object.assign({}, config.api, models, routes);
 
 app.use(morgan('combined'));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const api = require('./src/middlewares/api')(apiConfig, controllers);
 api.then(fct => app.use('/api', fct));

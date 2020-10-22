@@ -1,6 +1,10 @@
 const { JSON_MIMETYPE } = require('./http');
 const { createFromModel } = require('./factory');
+
 const jsonWriter = require('./writers/json');
+const validator = require('./validators/validator');
+const BadRequestError = require('./../errors/bad-request');
+const InternatError = require('./../errors/internal');
 
 module.exports = {
     /**
@@ -17,11 +21,11 @@ module.exports = {
         const route = req.route;
 
         if (!route.responses || !route.responses[code]) {
-            throw new Error(`No response found for code "${code}"`);
+            throw new InternatError(`No response found for code "${code}"`);
         }
 
         if (!route.responses[code].content[mimetype]) {
-            throw new Error(`No response found with mimetype "${mimetype}"`);
+            throw new InternatError(`No response found with mimetype "${mimetype}"`);
         }
 
         let model = data;
@@ -41,5 +45,29 @@ module.exports = {
         res.end();
 
         return res;
-    }
+    },
+
+    /**
+     * Validate request body
+     *
+     * @param {IncomingMessage} req
+     * @return {Object|null}
+     */
+    validateBody(req) {
+        const requestBody = req.route.requestBody;
+        const contentType = req.headers['content-type'];
+        let body = null;
+
+        if (requestBody && contentType) {
+            if (!requestBody.content[contentType]) {
+                throw new BadRequestError(`"${contentType}" request body doesnt exists`);
+            }
+
+            body = validator.validate(req.body, requestBody.content[contentType].schema);
+        }
+
+        req.body = body;
+
+        return body;
+    },
 };
