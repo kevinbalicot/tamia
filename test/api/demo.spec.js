@@ -35,7 +35,7 @@ describe('Demo controller', () => {
 
             return response.json();
         })
-            .then(data => assert.deepStrictEqual(data, { name: 'foo', createdAt: null }))
+            .then(data => assert.deepStrictEqual(data, { id: 1, name: 'foo', createdAt: null }))
             .then(() => done());
     });
 
@@ -46,7 +46,7 @@ describe('Demo controller', () => {
 
             return response.json();
         })
-            .then(data => assert.deepStrictEqual(data, [{ name: 'foo', createdAt: null }]))
+            .then(data => assert.deepStrictEqual(data, [{ id: 1, name: 'foo', createdAt: null }]))
             .then(() => done());
     });
 
@@ -62,6 +62,28 @@ describe('Demo controller', () => {
             return response.json();
         })
             .then(data => assert.deepStrictEqual(data, { message: 'Error: Parameter "name" is required' }))
+            .then(() => done());
+    });
+
+    it('should call get /items/{id} route', (done) => {
+        fetch(`http://localhost:${NODE_PORT}/api/items/1`).then(response => {
+            assert.strictEqual(response.status, 200);
+            assert.strictEqual(response.headers.get('Content-Type'), 'application/json');
+
+            return response.json();
+        })
+            .then(data => assert.deepStrictEqual(data, { id: 1, name: 'foo', createdAt: null }))
+            .then(() => done());
+    });
+
+    it('should call get /items/{id} route with wrong id and get 404 error', (done) => {
+        fetch(`http://localhost:${NODE_PORT}/api/items/10`).then(response => {
+            assert.strictEqual(response.status, 404);
+            assert.strictEqual(response.headers.get('Content-Type'), 'application/json');
+
+            return response.json();
+        })
+            .then(data => assert.deepStrictEqual(data, { message: 'Error: Item not found' }))
             .then(() => done());
     });
 

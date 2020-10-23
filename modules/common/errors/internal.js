@@ -5,3 +5,5 @@ class InternalError extends Error {
         this.code = code;
     }
 }
+
+module.exports = InternalError;

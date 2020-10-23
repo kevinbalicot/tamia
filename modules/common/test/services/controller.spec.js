@@ -1,7 +1,7 @@
 const assert = require('assert');
 const http = require('http');
 const BadRequestError = require('./../../errors/bad-request');
-const { send, validateBody } = require('./../../services/controller');
+const { send, validateBody, validatePath } = require('./../../services/controller');
 
 describe('Controller service', () => {
     let route = {
@@ -95,7 +95,9 @@ describe('Controller service', () => {
             req.route = route;
             req.body = expected;
 
-            assert.deepStrictEqual(validateBody(req), expected);
+            validateBody(req);
+
+            assert.deepStrictEqual(req.body, expected);
         });
 
         it('should throw error if value required is empty', () => {
@@ -129,7 +131,49 @@ describe('Controller service', () => {
             req.route = route;
             req.body = expected;
 
-            assert.deepStrictEqual(validateBody(req), { name: 'foo', quantity: 1 });
+            validateBody(req)
+
+            assert.deepStrictEqual(req.body, { name: 'foo', quantity: 1 });
+        });
+    });
+
+    let routeGetOne = {
+        parameters: [
+            {
+                name: 'id',
+                in: 'path',
+                schema: {
+                    type: 'integer'
+                },
+                required: true,
+            }
+        ]
+    };
+
+    describe('validatePath()', () => {
+        it('should validate path parameters', () => {
+            let req = new http.IncomingMessage();
+
+            req.headers['content-type'] = 'application/x-www-form-urlencoded';
+
+            const expected = { id: 1 };
+            req.route = routeGetOne;
+            req.params = { id: '1' };
+
+            validatePath(req);
+
+            assert.deepStrictEqual(req.params, expected);
+        });
+
+        it('should throw error for invalidate path parameters', () => {
+            let req = new http.IncomingMessage();
+
+            req.headers['content-type'] = 'application/x-www-form-urlencoded';
+
+            req.route = routeGetOne;
+            req.params = { id: 'foo' };
+
+            assert.throws(() => validatePath(req), BadRequestError);
         });
     });
 });

@@ -17,7 +17,7 @@ module.exports = {
      */
     send(req, res, data, status = 200, statusMessage = null) {
         const route = req.route
-        const response = route.responses[status];
+        const response = route ? route.responses[status] : null;
 
         let mimetype = JSON_MIMETYPE;
         let model = data;
@@ -47,7 +47,6 @@ module.exports = {
      * Validate request body
      *
      * @param {IncomingMessage} req
-     * @return {Object|null}
      */
     validateBody(req) {
         const requestBody = req.route.requestBody;
@@ -63,7 +62,21 @@ module.exports = {
         }
 
         req.body = body;
+    },
 
-        return body;
+    /**
+     * Valide
+     *
+     * @param {IncomingMessage} req
+     */
+    validatePath(req) {
+        if (req.params) {
+            const schemaModel = { properties: {} };
+            req.route.parameters
+                .filter(parameter => parameter.in === 'path')
+                .forEach(({ name, schema, required }) => schemaModel.properties[name] = { ...schema, required });
+
+            req.params = validator.validate(req.params, schemaModel);
+        }
     },
 };

@@ -1,8 +1,9 @@
 const SwaggerParser = require('@apidevtools/swagger-parser');
+
 const BadRequestError = require('./../../modules/common/errors/bad-request');
 const InternalError = require('./../../modules/common/errors/internal');
-const { matchRoute } = require('./../../modules/common/services/route-matcher');
-const { send, validateBody } = require('./../../modules/common/services/controller');
+const RouteMatcher = require('../../modules/common/services/router/matcher');
+const { send, validateBody, validatePath } = require('./../../modules/common/services/controller');
 
 module.exports = function(config, controllers, prefix = '') {
     let api = {};
@@ -29,7 +30,7 @@ module.exports = function(config, controllers, prefix = '') {
         }
 
         for (let path in api.paths) {
-            if (path && matchRoute(req, `${prefix}${path}`)) {
+            if (path && RouteMatcher.match(req, `${prefix}${path}`)) {
                 const route = api.paths[path][req.method.toLowerCase()];
 
                 if (!route) {
@@ -41,11 +42,13 @@ module.exports = function(config, controllers, prefix = '') {
                 }
 
                 if (!controllers[route.operationId] || typeof controllers[route.operationId] !== 'function') {
-                    throw new InternalError(`Controller callback "${controllers[route.operationId]}" doesnt exists or it is not a function.`);
+                    throw new InternalError(`Controller callback "${route.operationId}" doesnt exists or it is not a function.`);
                 }
 
                 req.route = route;
+                req.route.path = path;
 
+                validatePath(req);
                 validateBody(req);
 
                 return controllers[route.operationId](req, res, next);

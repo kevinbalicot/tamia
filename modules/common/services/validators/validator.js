@@ -17,7 +17,10 @@ module.exports = {
                 continue;
             }
 
-            if (schema.required && schema.required.includes(key) && !data[key]) {
+            if (
+                (Array.isArray(schema.required) && schema.required.includes(key) && !data[key]) ||
+                (schema.required === true && !data[key])
+            ) {
                 throw new BadRequest(`Parameter "${key}" is required`);
             }
 

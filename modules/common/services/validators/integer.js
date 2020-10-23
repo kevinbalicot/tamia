@@ -6,7 +6,7 @@ module.exports = {
             return def ? parseInt(def) : null;
         }
 
-        if (typeof data != 'number') {
+        if (isNaN(data)) {
             throw new Error('Value is not a number');
         }
 

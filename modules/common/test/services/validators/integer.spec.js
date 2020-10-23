@@ -5,6 +5,7 @@ describe('Integer validator service', () => {
     describe('validate()', () => {
         it('should validate integer', () => {
             assert.strictEqual(validate(1, {}), 1);
+            assert.strictEqual(validate('1', {}), 1);
         });
 
         it('should return default value for empty data', () => {
@@ -12,7 +13,7 @@ describe('Integer validator service', () => {
         });
 
         it('should throw error if value is not type of integer', () => {
-            assert.throws(() => validate('1', {}), Error);
+            assert.throws(() => validate('toto', {}), Error);
         });
     });
 });
