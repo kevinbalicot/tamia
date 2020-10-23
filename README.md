@@ -8,8 +8,17 @@ A REST API Server
 
 ```
 $ npm install --save @tamia/tamia
-$ cp .env.dist .env
-$ npm start
+```
+
+With connect or express js
+
+```js
+const tamiaApi = require('@tamia/tamia');
+
+// ...
+const config = { ... }; // Open API schema, see documentation for more info
+
+app.use(tamiaApi(config));
 ```
 
 ### Documentation

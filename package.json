@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "mocha --recursive \"./**/test/**/*.spec.js\"",
-    "start": "node server.js"
+    "start": "node server.js",
+    "prepublish": "test"
   },
   "repository": {
     "type": "git",
@@ -17,14 +18,14 @@
   "author": "Kevin Balicot <kevinbalicot@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@apidevtools/swagger-parser": "^10.0.2",
+    "@apidevtools/swagger-parser": "^10.0.2"
+  },
+  "devDependencies": {
     "body-parser": "^1.19.0",
     "connect": "^3.7.0",
     "dotenv": "^8.2.0",
-    "morgan": "^1.10.0"
-  },
-  "devDependencies": {
     "mocha": "^8.2.0",
+    "morgan": "^1.10.0",
     "node-fetch": "^2.6.1"
   }
 }
