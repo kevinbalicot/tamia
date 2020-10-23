@@ -1,4 +1,4 @@
-const BadRequestError = require('./../../modules/common/errors/bad-request');
+const NotFoundError = require('./../../modules/common/errors/not-found');
 const { send } = require('./../../modules/common/services/controller');
 
 const items = [];
@@ -9,7 +9,7 @@ module.exports = {
         const item = items.find(({ id }) => id === req.params.id);
 
         if (!item) {
-            throw new BadRequestError('Item not found', 404);
+            throw new NotFoundError('Item not found', 404);
         }
 
         return send(req, res, item);

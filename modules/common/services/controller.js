@@ -65,7 +65,7 @@ module.exports = {
     },
 
     /**
-     * Valide
+     * Validate req parameters from path schema
      *
      * @param {IncomingMessage} req
      */
