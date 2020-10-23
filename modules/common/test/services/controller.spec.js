@@ -50,7 +50,7 @@ describe('Controller service', () => {
 
             const data = { message: 'foo' };
 
-            res = send(req, res, data);
+            send(req, res, data);
 
             assert.strictEqual(res.finished, true);
             assert.strictEqual(res.statusCode, 200);
@@ -58,15 +58,18 @@ describe('Controller service', () => {
             assert.strictEqual(res.getHeader('Content-Type'), 'application/json');
         });
 
-        it('should throw error if response doesnt exists', () => {
+        it('should return something even if route doesnt exists', () => {
             let req = new http.IncomingMessage();
             let res = new http.ServerResponse(req);
 
             req.route = route;
 
-            const data = { message: 'not found' };
+            send(req, res, { message: 'not found' }, 404);
 
-            assert.throws(() => send(req, res, data, 404), Error);
+            assert.strictEqual(res.finished, true);
+            assert.strictEqual(res.statusCode, 404);
+            assert.strictEqual(res.statusMessage, 'Not Found');
+            assert.strictEqual(res.getHeader('Content-Type'), 'application/json');
         });
 
         it('should throw error if mimetype doesnt exists', () => {
@@ -74,10 +77,11 @@ describe('Controller service', () => {
             let res = new http.ServerResponse(req);
 
             req.route = route;
+            req.headers['accept'] = 'text/html';
 
             const data = { message: 'not found' };
 
-            assert.throws(() => send(req, res, data, 200, 'text/html'), Error);
+            assert.throws(() => send(req, res, data), Error);
         });
     });
 

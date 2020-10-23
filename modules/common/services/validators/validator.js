@@ -3,6 +3,13 @@ const integerValidator = require('./integer');
 const BadRequest = require("../../errors/bad-request");
 
 module.exports = {
+    /**
+     * Validate data with schema
+     *
+     * @param {*} data
+     * @param {Object} schema
+     * @return {Object}
+     */
     validate(data, schema) {
         let model = {};
         for (let key in schema.properties) {

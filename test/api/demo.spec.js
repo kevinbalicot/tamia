@@ -61,7 +61,7 @@ describe('Demo controller', () => {
 
             return response.json();
         })
-            .then(data => assert.deepStrictEqual(data, { message: 'Parameter "name" is required' }))
+            .then(data => assert.deepStrictEqual(data, { message: 'Error: Parameter "name" is required' }))
             .then(() => done());
     });
 

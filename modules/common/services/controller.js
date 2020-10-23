@@ -1,50 +1,46 @@
 const { JSON_MIMETYPE } = require('./http');
 const { createFromModel } = require('./factory');
 
-const jsonWriter = require('./writers/json');
+const writer = require('./writers/writer');
 const validator = require('./validators/validator');
 const BadRequestError = require('./../errors/bad-request');
-const InternatError = require('./../errors/internal');
 
 module.exports = {
     /**
-     * Generate response from route, code and mimetype
+     * Generate response from route, status and mimetype
      *
      * @param {IncomingMessage} req
      * @param {ServerResponse} res
      * @param {*} data
-     * @param {number} [code=200]
-     * @param {string} [mimetype=application/json]
-     * @return {ServerResponse}
+     * @param {number} [status=200]
+     * @param {string|null} [statusMessage=null]
      */
-    send(req, res, data, code = 200, mimetype = JSON_MIMETYPE) {
-        const route = req.route;
+    send(req, res, data, status = 200, statusMessage = null) {
+        const route = req.route
+        const response = route.responses[status];
 
-        if (!route.responses || !route.responses[code]) {
-            throw new InternatError(`No response found for code "${code}"`);
-        }
-
-        if (!route.responses[code].content[mimetype]) {
-            throw new InternatError(`No response found with mimetype "${mimetype}"`);
-        }
-
+        let mimetype = JSON_MIMETYPE;
         let model = data;
-        const response = route.responses[code].content[mimetype];
-        if (response.schema.type === 'object') {
-            model = createFromModel(data, response.schema);
-        } else if (response.schema.type === 'array' && Array.isArray(data)) {
-            model = data.map(item => createFromModel(item, response.schema.items));
+        if (response) {
+            if (req.headers['accept'] && req.headers['accept'] !== '*/*') {
+                mimetype = req.headers['accept'];
+            }
+
+            if (req.headers['accept'] && !response.content[mimetype]) {
+                throw new BadRequestError('Not Acceptable', 406);
+            }
+
+            const content = response.content[mimetype];
+            if (content.schema.type === 'object') {
+                model = createFromModel(data, content.schema);
+            } else if (content.schema.type === 'array' && Array.isArray(data)) {
+                model = data.map(item => createFromModel(item, content.schema.items));
+            }
         }
 
-        switch (mimetype) {
-            case JSON_MIMETYPE:
-            default:
-                res = jsonWriter.write(res, model, code)
-        }
+        writer.write(res, model, mimetype, status, statusMessage);
 
         res.end();
-
-        return res;
     },
 
     /**

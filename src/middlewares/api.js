@@ -4,15 +4,24 @@ const InternalError = require('./../../modules/common/errors/internal');
 const { matchRoute } = require('./../../modules/common/services/route-matcher');
 const { send, validateBody } = require('./../../modules/common/services/controller');
 
-module.exports = async function(config, controllers, prefix = '') {
+module.exports = function(config, controllers, prefix = '') {
     let api = {};
-    try {
-        const parser = new SwaggerParser();
-        api = await parser.validate(config);
-    } catch (e) {
-        throw new Error(e);
-    }
+    const parser = new SwaggerParser();
+    parser.validate(config)
+        .then(config => api = config)
+        .catch(e => {
+            console.error(e);
+            process.exit(1);
+        });
 
+    /**
+     * Perform request for API middleware
+     *
+     * @param {IncomingMessage} req
+     * @param {ServerResponse} res
+     * @param {function} next
+     * @return {*}
+     */
     const performRequest = (req, res, next) => {
         if (req.url === '/doc') {
             res.setHeader('Content-Type', 'application/json');
@@ -50,7 +59,8 @@ module.exports = async function(config, controllers, prefix = '') {
         try {
             performRequest(req, res, next);
         } catch (e) {
-            return send(req, res, e, e.code || 500);
+            console.error(e);
+            send(req, res, { message: String(e) } , e.code || 500, e.message);
         }
     };
 };

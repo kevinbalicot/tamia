@@ -6,11 +6,9 @@ module.exports = {
      *
      * @param {ServerResponse} res
      * @param {Object|Array} data
-     * @param {number} [status=200]
-     * @param {string|null} [statusMessage=null]
      * @return {ServerResponse}
      */
-    write(res, data, status = 200, statusMessage = null) {
+    write(res, data) {
         if (!(res instanceof http.ServerResponse)) {
             throw new Error(`"res" parameter has to be instance of ServerResponse.`);
         }
@@ -24,11 +22,6 @@ module.exports = {
 
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Content-Size', json.length);
-        res.statusCode = status;
-
-        if (statusMessage) {
-            res.statusMessage = statusMessage;
-        }
 
         res.write(json);
 
