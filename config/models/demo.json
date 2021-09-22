@@ -23,6 +23,9 @@
                 "properties": {
                     "message": {
                         "type": "string"
+                    },
+                    "code": {
+                        "type": "integer"
                     }
                 }
             }

@@ -38,11 +38,11 @@ module.exports = function(config, controllers, prefix = '') {
                 }
 
                 if (!route.operationId) {
-                    throw new InternalError(`Open API path need operationId.`);
+                    throw new InternalError('Open API path need operationId.');
                 }
 
                 if (!controllers[route.operationId] || typeof controllers[route.operationId] !== 'function') {
-                    throw new InternalError(`Controller callback "${route.operationId}" doesnt exists or it is not a function.`);
+                    throw new InternalError(`Controller callback "${route.operationId}" doesn't exists or it is not a function.`);
                 }
 
                 req.route = route;
@@ -63,7 +63,7 @@ module.exports = function(config, controllers, prefix = '') {
             performRequest(req, res, next);
         } catch (e) {
             console.error(e);
-            send(req, res, { message: String(e) } , e.code || 500, e.message);
+            send(req, res, { message: String(e), code: e.code || 500 } , e.code || 500, e.message);
         }
     };
 };
