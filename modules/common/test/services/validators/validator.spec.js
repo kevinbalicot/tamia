@@ -16,14 +16,20 @@ describe('Validator service', () => {
                 },
                 author: {
                     type: 'object',
+                    default: null,
                     properties: {
                         username: {
                             type: 'string'
                         }
                     }
                 },
+                private: {
+                    type: 'boolean',
+                    default: false
+                },
                 comments: {
                     type: 'array',
+                    default: [],
                     items: {
                         type: 'object',
                         properties: {
@@ -36,16 +42,39 @@ describe('Validator service', () => {
             }
         };
 
-        it('should validate data with schema', () => {
+        it('should validate data with schema with default values', () => {
             const data = { name: 'foo' };
-            const expected = { name: 'foo', quantity: 1, author: null, comments: [] };
+            const expected = { name: 'foo', quantity: 1, author: null, comments: [], private: false };
+
+            assert.deepStrictEqual(validate(data, schema), expected);
+        });
+
+        it('should validate data with schema with nullable values', () => {
+            delete schema.properties.author.default;
+            delete schema.properties.comments.default;
+
+            schema.properties.author.nullable = true;
+            schema.properties.comments.nullable = true;
+
+            const data = { name: 'foo' };
+            const expected = { name: 'foo', quantity: 1, author: null, comments: [], private: false };
+
+            assert.deepStrictEqual(validate(data, schema), expected);
+        });
+
+        it('should validate data with schema with not nullable values', () => {
+            schema.properties.author.nullable = false;
+            schema.properties.comments.nullable = false;
+
+            const data = { name: 'foo' };
+            const expected = { name: 'foo', quantity: 1, private: false };
 
             assert.deepStrictEqual(validate(data, schema), expected);
         });
 
         it('should validate deep data with schema', () => {
-            const data = { name: 'foo', author: { username: 'john' }, comments: [{ username: 'a' }, { username: 'a' }] };
-            const expected = { name: 'foo', quantity: 1, author: { username: 'john' }, comments: [{ username: 'a' }, { username: 'a' }] };
+            const data = { name: 'foo', author: { username: 'john' }, comments: [{ username: 'a' }, { username: 'a' }], private: true };
+            const expected = { name: 'foo', quantity: 1, author: { username: 'john' }, comments: [{ username: 'a' }, { username: 'a' }], private: true };
 
             assert.deepStrictEqual(validate(data, schema), expected);
         });

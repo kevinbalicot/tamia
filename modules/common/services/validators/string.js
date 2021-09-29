@@ -1,9 +1,9 @@
 module.exports = {
     validate(data, schema) {
         if (!data) {
-            const def = schema.default || schema.example;
+            const def = undefined !== schema.default ? schema.default : undefined;
 
-            return def ? String(def) : null;
+            return def ? String(def) : (schema.nullable ? null : undefined);
         }
 
         if (typeof data != 'string') {
@@ -11,5 +11,9 @@ module.exports = {
         }
 
         return String(data);
+    },
+
+    parse(data, defaultValue = undefined) {
+        return module.exports.validate(data, { default: defaultValue });
     },
 }

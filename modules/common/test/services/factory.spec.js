@@ -12,11 +12,14 @@ describe('Factory service', () => {
                     quantity: {
                         type: 'integer',
                     },
+                    private: {
+                        type: 'boolean',
+                    }
                 }
             };
 
-            const data = { name: 'foo', quantity: 2, foo: 'bar' };
-            const expected = { name: 'foo', quantity: 2 };
+            const data = { name: 'foo', quantity: 2, foo: 'bar', private: 1 };
+            const expected = { name: 'foo', quantity: 2, private: true };
 
             assert.deepStrictEqual(factory.createFromModel(data, model), expected);
         });
@@ -31,6 +34,9 @@ describe('Factory service', () => {
                     quantity: {
                         type: 'integer',
                     },
+                    private: {
+                        type: 'boolean',
+                    }
                 }
             };
 
@@ -48,7 +54,7 @@ describe('Factory service', () => {
                     },
                     quantity: {
                         type: 'integer',
-                        example: 2,
+                        default: 2,
                     },
                 }
             };
@@ -70,9 +76,28 @@ describe('Factory service', () => {
                 }
             };
 
-            const expected = { name: null, quantity: null };
+            const expected = {};
 
             assert.deepStrictEqual(factory.createFromModel({}, model), expected);
+        });
+
+        it('should create empty object with default data from model', () => {
+            const model = {
+                properties: {
+                    name: {
+                        type: 'string',
+                        default: null,
+                    },
+                    quantity: {
+                        type: 'integer',
+                        default: null,
+                    },
+                }
+            };
+
+            const expected = {};
+
+            assert.deepStrictEqual(factory.createFromModel({ name: null, quantity: null }, model), expected);
         });
 
         it('should create object from model with deep model', () => {
@@ -90,13 +115,16 @@ describe('Factory service', () => {
                             content: {
                                 type: 'string',
                             },
+                            private: {
+                                type: 'boolean',
+                            }
                         }
                     }
                 }
             };
 
-            const data = { name: 'foo', foo: 'bar', comment: { username: 'john', content: 'hello', stars: 5 } };
-            const expected = { name: 'foo', comment: { username: 'john', content: 'hello' } };
+            const data = { name: 'foo', foo: 'bar', comment: { username: 'john', content: 'hello', stars: 5, private: 0 } };
+            const expected = { name: 'foo', comment: { username: 'john', content: 'hello', private: false } };
 
             assert.deepStrictEqual(factory.createFromModel(data, model), expected);
         });
@@ -129,6 +157,9 @@ describe('Factory service', () => {
                             properties: {
                                 word: {
                                     type: 'string',
+                                },
+                                private: {
+                                    type: 'boolean',
                                 }
                             }
                         }
@@ -136,8 +167,8 @@ describe('Factory service', () => {
                 }
             };
 
-            const data = { words: [{ word: 'foo' }, { word: 'bar' }] };
-            const expected = { words: [{ word: 'foo' }, { word: 'bar' }] };
+            const data = { words: [{ word: 'foo', private: true }, { word: 'bar', private: 0 }] };
+            const expected = { words: [{ word: 'foo', private: true }, { word: 'bar', private: false }] };
 
             assert.deepStrictEqual(factory.createFromModel(data, model), expected);
         });

@@ -1,3 +1,7 @@
+const stringValidator = require('./validators/string');
+const integerValidator = require('./validators/integer');
+const booleanValidator = require('./validators/boolean');
+
 module.exports = {
     /**
      * Create object from OpenAPI model
@@ -22,14 +26,17 @@ module.exports = {
                 throw new Error(`Parameter "${key}" is required`);
             }
 
-            const def = model.properties[key].default || model.properties[key].example || null;
+            const def = undefined !== model.properties[key].default ? model.properties[key].default : undefined;
             switch (model.properties[key].type) {
                 case 'string':
                 default:
-                    newModel[key] = data[key] ? String(data[key]) : def;
+                    newModel[key] = stringValidator.parse(data[key], def);
                     break;
                 case 'integer':
-                    newModel[key] = data[key] ? parseInt(data[key]) : def;
+                    newModel[key] = integerValidator.parse(data[key], def);
+                    break;
+                case 'boolean':
+                    newModel[key] = booleanValidator.parse(data[key], def);
                     break;
                 case 'object':
                     newModel[key] = module.exports.createFromModel(data[key], model.properties[key]);
@@ -37,6 +44,11 @@ module.exports = {
                 case 'array':
                     newModel[key] = (data[key] || []).map(item => module.exports.createFromModel(item, model.properties[key].items));
                     break;
+            }
+
+            // Cleaning model
+            if (newModel[key] === undefined) {
+                delete newModel[key];
             }
         }
 
