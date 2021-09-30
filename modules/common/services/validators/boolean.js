@@ -15,7 +15,7 @@ module.exports = {
         return !!data;
     },
 
-    parse(data, defaultValue = undefined) {
-        return module.exports.validate(data, { default: defaultValue });
+    parse(data, schema) {
+        return this.validate(data, schema);
     },
 };

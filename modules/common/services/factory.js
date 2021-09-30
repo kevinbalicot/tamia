@@ -26,17 +26,16 @@ module.exports = {
                 throw new Error(`Parameter "${key}" is required`);
             }
 
-            const def = undefined !== model.properties[key].default ? model.properties[key].default : undefined;
             switch (model.properties[key].type) {
                 case 'string':
                 default:
-                    newModel[key] = stringValidator.parse(data[key], def);
+                    newModel[key] = stringValidator.parse(data[key], model.properties[key]);
                     break;
                 case 'integer':
-                    newModel[key] = integerValidator.parse(data[key], def);
+                    newModel[key] = integerValidator.parse(data[key], model.properties[key]);
                     break;
                 case 'boolean':
-                    newModel[key] = booleanValidator.parse(data[key], def);
+                    newModel[key] = booleanValidator.parse(data[key], model.properties[key]);
                     break;
                 case 'object':
                     newModel[key] = module.exports.createFromModel(data[key], model.properties[key]);

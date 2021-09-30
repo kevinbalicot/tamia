@@ -21,6 +21,7 @@ module.exports = {
 
     postItem(req, res) {
         req.body.id = ++id;
+        req.body.createdAt = new Date();
         items.push(req.body);
 
         return send(req, res, req.body);

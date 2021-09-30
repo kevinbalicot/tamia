@@ -13,7 +13,7 @@ module.exports = {
         return parseInt(data);
     },
 
-    parse(data, defaultValue = undefined) {
-        return module.exports.validate(data, { default: defaultValue });
+    parse(data, schema) {
+        return this.validate(data, schema);
     },
 };

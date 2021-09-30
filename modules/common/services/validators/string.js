@@ -6,14 +6,39 @@ module.exports = {
             return def ? String(def) : (schema.nullable ? null : undefined);
         }
 
-        if (typeof data != 'string') {
-            throw new Error('Value is not a string');
+        switch (schema.format) {
+            case 'date':
+                return this._parseDate(data, 'date');
+            case 'date-time':
+                return this._parseDate(data, 'date-time');
+            case 'byte':
+                return this._parseBase64(data);
+            default:
+                return String(data);
         }
-
-        return String(data);
     },
 
-    parse(data, defaultValue = undefined) {
-        return module.exports.validate(data, { default: defaultValue });
+    parse(data, schema) {
+        return this.validate(data, schema);
+    },
+
+    _parseDate(value, type = 'date') {
+        if (value instanceof Date) {
+            return 'date' === type ? value.toDateString() : value.toString();
+        } else {
+            return new Date(value);
+        }
+    },
+
+    _parseBase64(value) {
+        if (value.match(/^(?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?$/)) {
+            const buffer = Buffer.from(value, 'base64');
+
+            return buffer.toString('utf-8');
+        } else {
+            const buffer = Buffer.from(value, 'utf-8');
+
+            return buffer.toString('base64');
+        }
     },
 }

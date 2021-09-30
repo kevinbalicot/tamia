@@ -29,24 +29,26 @@ describe('Demo controller', () => {
             'Content-Type': 'application/x-www-form-urlencoded',
         };
 
+        const now = new Date();
         fetch(`http://localhost:${NODE_PORT}/api/items`, { method: 'POST', headers, body: 'name=foo' }).then(response => {
             assert.strictEqual(response.status, 200);
             assert.strictEqual(response.headers.get('Content-Type'), 'application/json');
 
             return response.json();
         })
-            .then(data => assert.deepStrictEqual(data, { id: 1, name: 'foo', createdAt: null }))
+            .then(data => assert.deepStrictEqual(data, { id: 1, name: 'foo', createdAt: now.toDateString() }))
             .then(() => done());
     });
 
     it('should call get /items route with new data', (done) => {
+        const now = new Date();
         fetch(`http://localhost:${NODE_PORT}/api/items`).then(response => {
             assert.strictEqual(response.status, 200);
             assert.strictEqual(response.headers.get('Content-Type'), 'application/json');
 
             return response.json();
         })
-            .then(data => assert.deepStrictEqual(data, [{ id: 1, name: 'foo', createdAt: null }]))
+            .then(data => assert.deepStrictEqual(data, [{ id: 1, name: 'foo', createdAt: now.toDateString() }]))
             .then(() => done());
     });
 
@@ -61,18 +63,19 @@ describe('Demo controller', () => {
 
             return response.json();
         })
-            .then(data => assert.deepStrictEqual(data, { message: 'Error: Parameter "name" is required' }))
+            .then(data => assert.deepStrictEqual(data, { code: 400, message: 'Error: Parameter "name" is required' }))
             .then(() => done());
     });
 
     it('should call get /items/{id} route', (done) => {
+        const now = new Date();
         fetch(`http://localhost:${NODE_PORT}/api/items/1`).then(response => {
             assert.strictEqual(response.status, 200);
             assert.strictEqual(response.headers.get('Content-Type'), 'application/json');
 
             return response.json();
         })
-            .then(data => assert.deepStrictEqual(data, { id: 1, name: 'foo', createdAt: null }))
+            .then(data => assert.deepStrictEqual(data, { id: 1, name: 'foo', createdAt: now.toDateString() }))
             .then(() => done());
     });
 
@@ -83,7 +86,7 @@ describe('Demo controller', () => {
 
             return response.json();
         })
-            .then(data => assert.deepStrictEqual(data, { message: 'Error: Item not found' }))
+            .then(data => assert.deepStrictEqual(data, { code: 404, message: 'Error: Item not found' }))
             .then(() => done());
     });
 

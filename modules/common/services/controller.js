@@ -11,17 +11,17 @@ module.exports = {
      *
      * @param {IncomingMessage} req
      * @param {ServerResponse} res
-     * @param {*} data
+     * @param {*} [data=null]
      * @param {number} [status=200]
      * @param {string|null} [statusMessage=null]
      */
-    send(req, res, data, status = 200, statusMessage = null) {
+    send(req, res, data = null, status = 200, statusMessage = null) {
         const route = req.route
         const response = route ? route.responses[status] : null;
 
         let mimetype = JSON_MIMETYPE;
         let model = data;
-        if (response) {
+        if (response && response.content) {
             if (req.headers['accept'] && req.headers['accept'] !== '*/*') {
                 mimetype = req.headers['accept'];
             }
