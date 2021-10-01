@@ -2,7 +2,7 @@
     "api": {
         "openapi": "3.0.1",
         "info": {
-            "version": "1.3.0",
+            "version": "1.0.0",
             "title": "Tamia",
             "description": "Tamia API demo",
             "termsOfService": "http://api_url/terms/",
@@ -16,7 +16,17 @@
                 "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
             }
         },
-        "tags": []
+        "servers": [
+            {
+                "url": "http://localhost:8080/api"
+            }
+        ],
+        "tags": [
+            {
+                "name": "Item",
+                "description": "Item managing"
+            }
+        ]
     },
 
     "models": [

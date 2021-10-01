@@ -26,4 +26,28 @@ module.exports = {
 
         return send(req, res, req.body);
     },
+
+    patchItemById(req, res) {
+        let index = items.findIndex(({ id }) => id === req.params.id);
+
+        if (!items[index]) {
+            throw new NotFoundError('Item not found', 404);
+        }
+
+        items[index] = { ...items[index], ...req.body };
+
+        return send(req, res, items[index]);
+    },
+
+    deleteItemById(req, res) {
+        const index = items.findIndex(({ id }) => id === req.params.id);
+
+        if (index === -1) {
+            throw new NotFoundError('Item not found', 404);
+        }
+
+        items.splice(index, 1);
+
+        return send(req, res, null, 204);
+    },
 }

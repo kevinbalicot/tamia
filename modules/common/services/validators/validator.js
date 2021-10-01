@@ -65,7 +65,7 @@ module.exports = {
                     delete model[key];
                 }
             } catch (e) {
-                throw new BadRequest(`Error with "${key}" : ${e}`);
+                throw new BadRequest(`Parameter "${key}": ${e.message}`);
             }
         }
 

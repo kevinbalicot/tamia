@@ -3,6 +3,7 @@
         "/items/{id}": {
             "get": {
                 "description": "Get one item",
+                "tags": ["Item"],
                 "operationId": "getItemById",
                 "parameters": [
                     {
@@ -24,6 +25,116 @@
                                 }
                             }
                         }
+                    },
+
+                    "404": {
+                        "description": "Item not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DemoError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
+            "delete": {
+                "description": "Delete one item",
+                "tags": ["Item"],
+                "operationId": "deleteItemById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Item removed"
+                    },
+
+                    "404": {
+                        "description": "Item not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DemoError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
+            "patch": {
+                "description": "Patch an item",
+                "tags": ["Item"],
+                "operationId": "patchItemById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "checked": {
+                                        "type": "boolean"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Get one item",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Item"
+                                }
+                            }
+                        }
+                    },
+
+                    "404": {
+                        "description": "Item not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DemoError"
+                                }
+                            }
+                        }
+                    },
+
+                    "400": {
+                        "description": "Bad item data from request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DemoError"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -31,6 +142,7 @@
         "/items": {
             "get": {
                 "description": "Get items",
+                "tags": ["Item"],
                 "operationId": "getItems",
                 "parameters": [
                     {
@@ -61,6 +173,7 @@
 
             "post": {
                 "description": "Post new item",
+                "tags": ["Item"],
                 "operationId": "postItem",
                 "parameters": [],
                 "requestBody": {

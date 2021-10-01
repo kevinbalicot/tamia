@@ -12,7 +12,16 @@ const app = connect();
 app.use(morgan('combined'));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/api', tamiaApi(require('./config/config.json')));
+const middleware = tamiaApi(
+    require('./config/config.json'),
+    {
+        plugins: [
+            require('@tamia/doc-plugin'),
+        ]
+    }
+);
+
+app.use('/api', middleware);
 
 http.createServer(app)
     .listen(NODE_PORT)

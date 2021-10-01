@@ -11,9 +11,13 @@
                     "name": {
                         "type": "string"
                     },
+                    "checked": {
+                        "type": "boolean",
+                        "default": false
+                    },
                     "createdAt": {
                         "type": "string",
-                        "format": "date"
+                        "format": "date-time"
                     }
                 }
             },
