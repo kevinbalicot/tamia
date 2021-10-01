@@ -26,7 +26,7 @@ app.use(tamiaApi(config));
 Summary
 
 - [CONFIGURATION](/doc/CONFIGURATION.md)
-
+- [PLUGINS](/doc/PLUGINS.md)
 
 ### Tests
 
