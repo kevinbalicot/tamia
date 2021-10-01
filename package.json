@@ -18,7 +18,7 @@
   "author": "Kevin Balicot <kevinbalicot@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@apidevtools/swagger-parser": "^10.0.2"
+    "@apidevtools/swagger-parser": "^10.0"
   },
   "devDependencies": {
     "body-parser": "^1.19.0",
