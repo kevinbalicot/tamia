@@ -36,7 +36,7 @@ describe('Demo controller', () => {
 
             return response.json();
         })
-            .then(data => assert.deepStrictEqual(data, { id: 1, name: 'foo', createdAt: now.toDateString(), checked: false }))
+            .then(data => assert.deepStrictEqual(data, { id: 1, name: 'foo', createdAt: now.toString(), checked: false }))
             .then(() => done());
     });
 
@@ -84,7 +84,7 @@ describe('Demo controller', () => {
 
             return response.json();
         })
-            .then(data => assert.deepStrictEqual(data, { id: 1, name: 'bar', createdAt: now.toDateString(), checked: true }))
+            .then(data => assert.deepStrictEqual(data, { id: 1, name: 'bar', createdAt: now.toString(), checked: true }))
             .then(() => done());
     });
 
@@ -96,7 +96,7 @@ describe('Demo controller', () => {
 
             return response.json();
         })
-            .then(data => assert.deepStrictEqual(data, [{ id: 1, name: 'bar', createdAt: now.toDateString(), checked: true }]))
+            .then(data => assert.deepStrictEqual(data, [{ id: 1, name: 'bar', createdAt: now.toString(), checked: true }]))
             .then(() => done());
     });
 
@@ -123,7 +123,7 @@ describe('Demo controller', () => {
 
             return response.json();
         })
-            .then(data => assert.deepStrictEqual(data, { id: 1, name: 'bar', createdAt: now.toDateString(), checked: true }))
+            .then(data => assert.deepStrictEqual(data, { id: 1, name: 'bar', createdAt: now.toString(), checked: true }))
             .then(() => done());
     });
 

@@ -1,3 +1,4 @@
+const url = require('url');
 const { JSON_MIMETYPE } = require('./http');
 const { createFromModel } = require('./factory');
 
@@ -77,6 +78,22 @@ module.exports = {
                 .forEach(({ name, schema, required }) => schemaModel.properties[name] = { ...schema, required });
 
             req.params = validator.validate(req.params, schemaModel);
+        }
+    },
+
+    /**
+     * Validate req parameters from query schema
+     *
+     * @param {IncomingMessage} req
+     */
+    validateQuery(req) {
+        if (req.query) {
+            const schemaModel = { properties: {} };
+            req.route.parameters
+                .filter(parameter => parameter.in === 'query')
+                .forEach(({ name, schema, required }) => schemaModel.properties[name] = { ...schema, required });
+
+            req.query = validator.validate(req.query, schemaModel);
         }
     },
 };

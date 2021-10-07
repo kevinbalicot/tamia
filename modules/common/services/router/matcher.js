@@ -1,4 +1,5 @@
 const http = require('http');
+const url = require('url');
 
 module.exports = {
     /**
@@ -32,12 +33,15 @@ module.exports = {
 
         const route = `^${pattern}$`;
         const keys = pattern.match(/{(\w+)}/g) || [];
+        const parsedUrl = url.parse(req.url, true);
 
         let cleanPattern = route.replace(/\//g, '\\/');
         cleanPattern = cleanPattern.replace(/{(\w+)}/g, '((?:(?!\\/)[\\W\\w_])+)');
 
         const regexp = new RegExp(cleanPattern, 'g');
-        const values = regexp.exec(req.url);
+        const values = regexp.exec(parsedUrl.pathname);
+
+        req.query = parsedUrl.query;
 
         if (!!values) {
             req.params = {};

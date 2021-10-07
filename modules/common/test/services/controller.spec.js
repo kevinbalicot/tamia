@@ -1,7 +1,7 @@
 const assert = require('assert');
 const http = require('http');
 const BadRequestError = require('./../../errors/bad-request');
-const { send, validateBody, validatePath } = require('./../../services/controller');
+const { send, validateBody, validatePath, validateQuery } = require('./../../services/controller');
 
 describe('Controller service', () => {
     let route = {
@@ -174,6 +174,52 @@ describe('Controller service', () => {
             req.params = { id: 'foo' };
 
             assert.throws(() => validatePath(req), BadRequestError);
+        });
+    });
+
+    const routeFindAll = {
+        parameters: [
+            {
+                name: 'orderBy',
+                in: 'query',
+                schema: {
+                    type: 'string',
+                },
+            },
+            {
+                name: 'direction',
+                in: 'query',
+                schema: {
+                    type: 'integer',
+                },
+            }
+        ]
+    };
+
+    describe('validateQuery()', () => {
+        it('should validate query parameters', () => {
+            let req = new http.IncomingMessage();
+
+            req.headers['content-type'] = 'application/x-www-form-urlencoded';
+
+            const expected = { orderBy: 'name', direction: 1 };
+            req.route = routeFindAll;
+            req.query = { orderBy: 'name', direction: '1' };
+
+            validateQuery(req);
+
+            assert.deepStrictEqual(req.query, expected);
+        });
+
+        it('should throw error for invalidate query parameters', () => {
+            let req = new http.IncomingMessage();
+
+            req.headers['content-type'] = 'application/x-www-form-urlencoded';
+
+            req.route = routeFindAll;
+            req.query = { orderBy: 'name', direction: 'ASC' };
+
+            assert.throws(() => validateQuery(req), BadRequestError);
         });
     });
 });

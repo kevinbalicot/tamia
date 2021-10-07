@@ -3,7 +3,7 @@ const SwaggerParser = require('@apidevtools/swagger-parser');
 const BadRequestError = require('./../../modules/common/errors/bad-request');
 const InternalError = require('./../../modules/common/errors/internal');
 const RouteMatcher = require('../../modules/common/services/router/matcher');
-const { send, validateBody, validatePath } = require('./../../modules/common/services/controller');
+const { send, validateBody, validatePath, validateQuery } = require('./../../modules/common/services/controller');
 const compose = require('./compose');
 
 module.exports = function(config, controllers, plugins = []) {
@@ -45,6 +45,7 @@ module.exports = function(config, controllers, plugins = []) {
                     req.route.path = path;
 
                     validatePath(req);
+                    validateQuery(req);
                     validateBody(req);
 
                     return controllers[route.operationId](req, res, next);
