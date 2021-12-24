@@ -1,4 +1,3 @@
-const url = require('url');
 const { JSON_MIMETYPE } = require('./http');
 const { createFromModel } = require('./factory');
 
@@ -73,7 +72,7 @@ module.exports = {
     validatePath(req) {
         if (req.params) {
             const schemaModel = { properties: {} };
-            req.route.parameters
+            (req.route.parameters || [])
                 .filter(parameter => parameter.in === 'path')
                 .forEach(({ name, schema, required }) => schemaModel.properties[name] = { ...schema, required });
 
@@ -89,7 +88,7 @@ module.exports = {
     validateQuery(req) {
         if (req.query) {
             const schemaModel = { properties: {} };
-            req.route.parameters
+            (req.route.parameters || [])
                 .filter(parameter => parameter.in === 'query')
                 .forEach(({ name, schema, required }) => schemaModel.properties[name] = { ...schema, required });
 

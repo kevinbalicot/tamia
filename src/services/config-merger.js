@@ -1,8 +1,14 @@
 module.exports = {
     mergeComponents(...configs) {
-        const result = { components: { schemas: {} } };
+        const result = { components: {} };
         for (let config of configs) {
-            result.components.schemas = Object.assign(result.components.schemas, config.components.schemas);
+            for (let componentName in config.components) {
+                if (!result.components[componentName]) {
+                    result.components[componentName] = {};
+                }
+
+                result.components[componentName] = Object.assign(result.components[componentName], config.components[componentName]);
+            }
         }
 
         return result;

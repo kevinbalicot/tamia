@@ -33,6 +33,22 @@
                     }
                 }
             }
+        },
+        "securitySchemes": {
+            "oAuth": {
+                "type": "oauth2",
+                "description": "Oauth 2 security",
+                "flows": {
+                    "password": {
+                        "tokenUrl": "https://oauthorize.tk/authorize",
+                        "scopes": {}
+                    }
+                }
+            },
+            "bearer": {
+                "type": "http",
+                "scheme": "bearer"
+            }
         }
     }
 }
