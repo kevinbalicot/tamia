@@ -45,8 +45,7 @@ describe('Demo controller', () => {
             'Content-Type': 'application/x-www-form-urlencoded',
         };
 
-        const now = new Date();
-        fetch(`http://localhost:${NODE_PORT}/api/items/10`, { method: 'PATCH', headers, body: 'checked=1' }).then(response => {
+        fetch(`http://localhost:${NODE_PORT}/api/items/2`, { method: 'PATCH', headers, body: 'checked=1' }).then(response => {
             assert.strictEqual(response.status, 404);
             assert.strictEqual(response.headers.get('Content-Type'), 'application/json');
 
@@ -62,7 +61,7 @@ describe('Demo controller', () => {
         };
 
         const now = new Date();
-        fetch(`http://localhost:${NODE_PORT}/api/items/10`, { method: 'PATCH', headers, body: 'checked=bar' }).then(response => {
+        fetch(`http://localhost:${NODE_PORT}/api/items/1`, { method: 'PATCH', headers, body: 'checked=bar' }).then(response => {
             assert.strictEqual(response.status, 400);
             assert.strictEqual(response.headers.get('Content-Type'), 'application/json');
 

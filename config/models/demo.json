@@ -1,5 +1,12 @@
 {
     "components": {
+        "securitySchemes": {
+            "bearer": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        },
+
         "schemas": {
             "Item": {
                 "required": ["name"],
@@ -32,22 +39,6 @@
                         "type": "integer"
                     }
                 }
-            }
-        },
-        "securitySchemes": {
-            "oAuth": {
-                "type": "oauth2",
-                "description": "Oauth 2 security",
-                "flows": {
-                    "password": {
-                        "tokenUrl": "https://oauthorize.tk/authorize",
-                        "scopes": {}
-                    }
-                }
-            },
-            "bearer": {
-                "type": "http",
-                "scheme": "bearer"
             }
         }
     }

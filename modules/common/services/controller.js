@@ -16,19 +16,19 @@ module.exports = {
      * @param {string|null} [statusMessage=null]
      */
     send(req, res, data = null, status = 200, statusMessage = null) {
-        const route = req.route
+        const route = req.route;
         const response = route ? route.responses[status] : null;
 
         let mimetype = JSON_MIMETYPE;
         let model = data;
         if (response && response.content) {
-            if (req.headers['accept'] && req.headers['accept'] !== '*/*') {
-                mimetype = req.headers['accept'];
-            }
+            //if (req.headers['accept'] && req.headers['accept'] !== '*/*') {
+            //    mimetype = req.headers['accept'];
+            //}
 
-            if (req.headers['accept'] && !response.content[mimetype]) {
-                throw new BadRequestError('Not Acceptable', 406);
-            }
+            //if (req.headers['accept'] && !response.content[mimetype]) {
+            //    throw new BadRequestError('Not Acceptable', 406);
+            //}
 
             const content = response.content[mimetype];
             if (content.schema.type === 'object') {

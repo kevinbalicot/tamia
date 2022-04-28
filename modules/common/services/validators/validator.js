@@ -24,11 +24,20 @@ module.exports = {
                 continue;
             }
 
+            // If value required but undefined
             if (
-                (Array.isArray(schema.required) && schema.required.includes(key) && !data[key]) ||
+                (schema.required && schema.required.includes(key) && !data[key]) ||
                 (schema.required === true && !data[key])
             ) {
                 throw new BadRequest(`Parameter "${key}" is required`);
+            }
+
+            // If value not required but undefined
+            if (
+                ((!schema.required || !schema.required.includes(key)) && !data[key]) ||
+                (schema.required === false && !data[key])
+            ) {
+                continue;
             }
 
             try {

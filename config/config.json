@@ -39,8 +39,5 @@
         "/config/routes/demo.json"
     ],
 
-    "controllers": [
-        "/src/controllers/hello",
-        "/src/controllers/demo"
-    ]
+    "controllers": []
 }

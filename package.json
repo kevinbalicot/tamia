@@ -5,8 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "mocha --recursive \"./**/test/**/*.spec.js\"",
-    "start": "node server.js",
-    "prepublish": "test"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",

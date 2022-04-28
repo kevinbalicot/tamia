@@ -2,7 +2,7 @@
 
 # TAMIA
 
-A REST API Server
+A REST API Server designed with Open API v3
 
 ## Installation
 
@@ -17,8 +17,10 @@ const tamiaApi = require('@tamia/tamia');
 
 // ...
 const config = { ... }; // Open API schema, see documentation for more info
+const options = { ... }; // Tamia API options
+const tamia = tamiaApi(config, options);
 
-app.use(tamiaApi(config));
+app.use(tamia.request);
 ```
 
 ### Documentation

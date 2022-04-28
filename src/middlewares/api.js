@@ -4,9 +4,12 @@ const BadRequestError = require('./../../modules/common/errors/bad-request');
 const InternalError = require('./../../modules/common/errors/internal');
 const RouteMatcher = require('../../modules/common/services/router/matcher');
 const { send, validateBody, validatePath, validateQuery } = require('./../../modules/common/services/controller');
+const { validateSecurity } = require('./../../modules/security/services/controller');
 const compose = require('./compose');
 
 module.exports = function(config, controllers, plugins = []) {
+    // https://swagger.io/docs/specification/about/
+
     let api = {};
     const parser = new SwaggerParser();
     parser.validate(config)
@@ -15,6 +18,31 @@ module.exports = function(config, controllers, plugins = []) {
             console.error(e);
             process.exit(1);
         });
+
+    const events = {
+        middlewares: {},
+
+        on(name, callback) {
+            if (!this.middlewares[name]) {
+                this.middlewares[name] = [];
+            }
+
+            this.middlewares[name].push(callback);
+        },
+
+        emit(name, req, res, next, ...data) {
+            const middlewares = [];
+            for (const eventName in this.middlewares) {
+                if ((new RegExp(`^${eventName}$`, 'ig')).test(name)) {
+                    middlewares.push(...this.middlewares[eventName]);
+                }
+            }
+
+            if (middlewares.length) {
+                return compose(req, res, middlewares, next, { api })(...data);
+            }
+        },
+    };
 
     /**
      * Perform request for API middleware
@@ -37,35 +65,50 @@ module.exports = function(config, controllers, plugins = []) {
                         throw new InternalError('Open API path need operationId.');
                     }
 
-                    if (!controllers[route.operationId] || typeof controllers[route.operationId] !== 'function') {
-                        throw new InternalError(`Controller callback "${route.operationId}" doesn't exists or it is not a function.`);
-                    }
-
                     req.route = route;
                     req.route.path = path;
+
+                    events.emit(`before:${route.operationId}`, req, res, next);
+
+                    if (api.components.securitySchemes && route.security) {
+                        validateSecurity(req, res, api.components.securitySchemes, events);
+                    }
 
                     validatePath(req);
                     validateQuery(req);
                     validateBody(req);
 
-                    return controllers[route.operationId](req, res, next);
+                    events.emit(route.operationId, req, res, next);
+
+                    if (
+                        !res.writableEnded &&
+                        typeof controllers[route.operationId] === 'function'
+                    ) {
+                        controllers[route.operationId](req, res, next);
+                    }
+
+                    events.emit(`after:${route.operationId}`, req, res, next);
+
+                    return;
                 }
             }
 
             next();
         };
 
-        plugins.push(middleware);
-
-        compose(req, res, plugins, next, { api })();
+        compose(req, res, [].concat(...plugins, middleware), next, { api })();
     };
 
-    return function(req, res, next) {
-        try {
-            performRequest(req, res, next);
-        } catch (e) {
-            console.error(e);
-            send(req, res, { message: String(e), code: e.code || 500 } , e.code || 500, e.message);
-        }
+    return {
+        request(req, res, next) {
+            try {
+                performRequest(req, res, next);
+            } catch (e) {
+                console.error(e);
+                send(req, res, { message: String(e), code: e.code || 500 } , e.code || 500, e.message);
+            }
+        },
+
+        ...events
     };
 };
