@@ -1,5 +1,5 @@
 {
-  "name": "@tamia/tamia",
+  "name": "@tamia-web/tamia",
   "version": "0.1.0",
   "description": "API REST server",
   "main": "server.js",
