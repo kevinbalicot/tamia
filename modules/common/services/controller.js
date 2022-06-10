@@ -32,9 +32,9 @@ module.exports = {
 
             const content = response.content[mimetype];
             if (content.schema.type === 'object') {
-                model = createFromModel(data, content.schema);
+                model = createFromModel(data, content.schema, true);
             } else if (content.schema.type === 'array' && Array.isArray(data)) {
-                model = data.map(item => createFromModel(item, content.schema.items));
+                model = data.map(item => createFromModel(item, content.schema.items, true));
             }
         }
 

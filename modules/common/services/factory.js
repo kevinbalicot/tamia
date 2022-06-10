@@ -1,6 +1,7 @@
 const stringValidator = require('./validators/string');
 const integerValidator = require('./validators/integer');
 const booleanValidator = require('./validators/boolean');
+const numberValidator = require('./validators/number');
 
 module.exports = {
     /**
@@ -8,9 +9,10 @@ module.exports = {
      *
      * @param {*} data
      * @param {Object} model
+     * @param {Boolean} [shutdownError=false]
      * @return {Object}
      */
-    createFromModel(data, model) {
+    createFromModel(data, model, shutdownError = false) {
         let newModel = {};
 
         if (!model.properties) {
@@ -23,6 +25,11 @@ module.exports = {
             }
 
             if (model.required && model.required.includes(key) && !data[key]) {
+                if (shutdownError) {
+                    console.error(`Parameter "${key}" is required`);
+                    continue;
+                }
+
                 throw new Error(`Parameter "${key}" is required`);
             }
 
@@ -33,6 +40,9 @@ module.exports = {
                     break;
                 case 'integer':
                     newModel[key] = integerValidator.parse(data[key], model.properties[key]);
+                    break;
+                case 'number':
+                    newModel[key] = numberValidator.parse(data[key], model.properties[key]);
                     break;
                 case 'boolean':
                     newModel[key] = booleanValidator.parse(data[key], model.properties[key]);
