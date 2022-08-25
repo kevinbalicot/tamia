@@ -4,6 +4,36 @@ const booleanValidator = require('./boolean');
 const BadRequest = require("../../errors/bad-request");
 
 module.exports = {
+    _validateValue(value, schema) {
+        const getDefaultFromSchema = (schema) => {
+            let value = undefined !== schema.default ? schema.default : undefined;
+
+            return undefined === value && schema.nullable ? null : value;
+        };
+
+        switch (schema.type) {
+            case 'string':
+            default:
+                return stringValidator.validate(value, schema);
+            case 'integer':
+                return integerValidator.validate(value, schema);
+            case 'boolean':
+                return booleanValidator.validate(value, schema);
+            case 'object':
+                if (!value) {
+                    return getDefaultFromSchema(schema);
+                }
+
+                return module.exports.validate(value, schema);
+            case 'array':
+                if (!value) {
+                    return getDefaultFromSchema(schema);
+                }
+
+                return value.map(item => module.exports.validate(item, schema.items));
+        }
+    },
+
     /**
      * Validate data with schema
      *
@@ -12,62 +42,41 @@ module.exports = {
      * @return {Object}
      */
     validate(data, schema) {
-        const getDefaultFromSchema = (schema, defaultValue = null) => {
-            let value = undefined !== schema.default ? schema.default : undefined;
-
-            return undefined === value && schema.nullable ? defaultValue : value;
-        };
-
         let model = {};
+
+        if (!schema.properties) {
+            return module.exports._validateValue(data, schema);
+        }
+
+        const requiredFields = schema.required || [];
         for (let key in schema.properties) {
             if (!schema.properties.hasOwnProperty(key)) {
                 continue;
             }
 
+            const schemaField = schema.properties[key];
+
             // If value required but undefined
             if (
-                (schema.required && schema.required.includes(key) && !data[key]) ||
-                (schema.required === true && !data[key])
+                (schemaField.required || requiredFields.includes(key)) &&
+                undefined === data[key]
             ) {
                 throw new BadRequest(`Parameter "${key}" is required`);
             }
 
-            // If value not required but undefined
+            // If value not required but undefined and have no default value or set nullable
             if (
-                ((!schema.required || !schema.required.includes(key)) && !data[key]) ||
-                (schema.required === false && !data[key])
+                (!schemaField.required && !requiredFields.includes(key)) &&
+                undefined === data[key] &&
+                undefined === schemaField.default &&
+                undefined === schemaField.nullable
             ) {
                 continue;
             }
 
             try {
                 const value = data ? data[key] : null;
-                switch (schema.properties[key].type) {
-                    case 'string':
-                    default:
-                        model[key] = stringValidator.validate(value, schema.properties[key]);
-                        break;
-                    case 'integer':
-                        model[key] = integerValidator.validate(value, schema.properties[key]);
-                        break;
-                    case 'boolean':
-                        model[key] = booleanValidator.validate(value, schema.properties[key]);
-                        break;
-                    case 'object':
-                        if (!value) {
-                            model[key] = getDefaultFromSchema(schema.properties[key]);
-                            break;
-                        }
-                        model[key] = module.exports.validate(value, schema.properties[key]);
-                        break;
-                    case 'array':
-                        if (!value) {
-                            model[key] = getDefaultFromSchema(schema.properties[key], []);
-                            break;
-                        }
-                        model[key] = value.map(item => module.exports.validate(item, schema.properties[key].items));
-                        break;
-                }
+                model[key] = module.exports._validateValue(value, schemaField);
 
                 // Cleaning model
                 if (model[key] === undefined) {

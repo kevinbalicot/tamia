@@ -131,7 +131,7 @@ describe('Controller service', () => {
             req.route = route;
             req.body = expected;
 
-            validateBody(req)
+            validateBody(req);
 
             assert.deepStrictEqual(req.body, { name: 'foo', quantity: 1 });
         });

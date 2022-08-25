@@ -9,8 +9,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@git.beelab.tk:tamia/tamia.git"
+    "url": "git+https://github.com/kevinbalicot/tamia.git"
   },
+  "bugs": {
+    "url": "https://github.com/kevinbalicot/tamia/issues"
+  },
+  "homepage": "https://github.com/kevinbalicot/tamia#readme",
   "keywords": [
     "API"
   ],

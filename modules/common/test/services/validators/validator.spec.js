@@ -38,6 +38,12 @@ describe('Validator service', () => {
                             }
                         }
                     }
+                },
+                tags: {
+                    type: 'array',
+                    items: {
+                        type: 'string'
+                    }
                 }
             }
         };
@@ -45,6 +51,13 @@ describe('Validator service', () => {
         it('should validate data with schema with default values', () => {
             const data = { name: 'foo' };
             const expected = { name: 'foo', quantity: 1, author: null, comments: [], private: false };
+
+            assert.deepStrictEqual(validate(data, schema), expected);
+        });
+
+        it('should validate data with array value', () => {
+            const data = { name: 'foo', tags: ['A', 'B'] };
+            const expected = { name: 'foo', quantity: 1, author: null, comments: [], private: false, tags: ['A', 'B'] };
 
             assert.deepStrictEqual(validate(data, schema), expected);
         });
@@ -57,7 +70,7 @@ describe('Validator service', () => {
             schema.properties.comments.nullable = true;
 
             const data = { name: 'foo' };
-            const expected = { name: 'foo', quantity: 1, author: null, comments: [], private: false };
+            const expected = { name: 'foo', quantity: 1, author: null, comments: null, private: false };
 
             assert.deepStrictEqual(validate(data, schema), expected);
         });
