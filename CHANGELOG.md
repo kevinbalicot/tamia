@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/kevinbalicot/tamia/compare/v1.0.0...v1.0.1) (2022-09-26)
+
+
+### Bug Fixes
+
+* Fix integer validator ([c042b0d](https://github.com/kevinbalicot/tamia/commit/c042b0d28be86f14c70e7b3f77df96d99bac64f4))
+
 # 1.0.0 (2022-08-25)
 
 
