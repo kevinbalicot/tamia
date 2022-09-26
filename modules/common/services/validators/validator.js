@@ -1,5 +1,6 @@
 const stringValidator = require('./string');
 const integerValidator = require('./integer');
+const numberValidator = require('./number');
 const booleanValidator = require('./boolean');
 const BadRequest = require("../../errors/bad-request");
 
@@ -17,6 +18,8 @@ module.exports = {
                 return stringValidator.validate(value, schema);
             case 'integer':
                 return integerValidator.validate(value, schema);
+            case 'number':
+                return numberValidator.validate(value, schema);
             case 'boolean':
                 return booleanValidator.validate(value, schema);
             case 'object':

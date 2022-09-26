@@ -25,6 +25,7 @@ describe('Integer validator service', () => {
         });
 
         it('should parse value to integer', () => {
+            assert.strictEqual(service.parse(0, {}), 0);
             assert.strictEqual(service.parse(1, {}), 1);
             assert.strictEqual(service.parse('1', {}), 1);
             assert.strictEqual(service.parse(20, {}), 20);

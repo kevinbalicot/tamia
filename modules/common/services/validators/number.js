@@ -1,6 +1,6 @@
 module.exports = {
     validate(data, schema) {
-        if (!data) {
+        if (undefined === data || null === data) {
             const def = undefined !== schema.default ? schema.default : undefined;
 
             return def ? this._parseNumber(def) : (schema.nullable ? null : undefined);
