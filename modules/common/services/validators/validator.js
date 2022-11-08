@@ -25,6 +25,8 @@ module.exports = {
             case 'object':
                 if (!value) {
                     return getDefaultFromSchema(schema);
+                } else if (!schema.properties) {
+                    return value;
                 }
 
                 return module.exports.validate(value, schema);
