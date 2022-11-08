@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/kevinbalicot/tamia/compare/v1.0.1...v1.0.2) (2022-11-08)
+
+
+### Bug Fixes
+
+* Object type for validation ([cd80805](https://github.com/kevinbalicot/tamia/commit/cd80805c93b92e3a5669ab984f67156c9bd50b7d))
+
 ## [1.0.1](https://github.com/kevinbalicot/tamia/compare/v1.0.0...v1.0.1) (2022-09-26)
 
 

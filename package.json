@@ -1,6 +1,6 @@
 {
   "name": "@tamia-web/tamia",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "API REST server",
   "main": "src/index.js",
   "scripts": {
