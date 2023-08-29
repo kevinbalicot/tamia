@@ -11,9 +11,9 @@
 /**
  * @param {IncomingMessage} req
  * @param {ServerResponse} res
- * @param {Array<function>} middlewares
+ * @param {array<function>} middlewares
  * @param {function} [next = () => {}]
- * @param {Object} [scope={}]
+ * @param {object} [scope={}]
  *
  * @return {function} next
  */

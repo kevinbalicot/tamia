@@ -10,6 +10,10 @@ module.exports = {
             throw new Error('Value is not a number');
         }
 
+        if (schema.enum && Array.isArray(schema.enum) && schema.enum.includes(data)) {
+            throw new Error(`Value must be one of ${schema.enum.join()}`);
+        }
+
         return parseInt(data);
     },
 

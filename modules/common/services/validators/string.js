@@ -6,6 +6,10 @@ module.exports = {
             return def ? String(def) : (schema.nullable ? null : undefined);
         }
 
+        if (schema.enum && Array.isArray(schema.enum) && !schema.enum.includes(data)) {
+            throw new Error(`Value must be one of ${schema.enum.join()}`);
+        }
+
         switch (schema.format) {
             case 'date':
                 return this._parseDate(data, 'date');

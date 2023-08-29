@@ -8,14 +8,15 @@ module.exports = {
      *
      * @param {IncomingMessage} req
      * @param {string} pattern
+     * @param {string} [prefix='']
      * @return {boolean}
      */
-    match(req, pattern) {
+    match(req, pattern, prefix = '') {
         if (!(req instanceof http.IncomingMessage)) {
             throw new Error(`"req" parameter has to be instance of IncomingMessage.`);
         }
 
-        return module.exports.parseParametersFromRoute(req, pattern);
+        return module.exports.parseParametersFromRoute(req, pattern, prefix);
     },
 
     /**
@@ -24,9 +25,10 @@ module.exports = {
      *
      * @param {IncomingMessage} req
      * @param {string} pattern
+     * @param {string} [ignoredPrefix='']
      * @return {boolean}
      */
-    parseParametersFromRoute(req, pattern) {
+    parseParametersFromRoute(req, pattern, ignoredPrefix = '') {
         if (!(req instanceof http.IncomingMessage)) {
             throw new Error(`"req" parameter has to be instance of IncomingMessage.`);
         }
@@ -39,7 +41,7 @@ module.exports = {
         cleanPattern = cleanPattern.replace(/{(\w+)}/g, '((?:(?!\\/)[\\W\\w_])+)');
 
         const regexp = new RegExp(cleanPattern, 'g');
-        const values = regexp.exec(parsedUrl.pathname);
+        const values = regexp.exec(parsedUrl.pathname.replace(ignoredPrefix, ''));
 
         req.query = parsedUrl.query;
 

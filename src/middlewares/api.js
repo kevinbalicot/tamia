@@ -3,12 +3,13 @@ const SwaggerParser = require('@apidevtools/swagger-parser');
 const BadRequestError = require('./../../modules/common/errors/bad-request');
 const InternalError = require('./../../modules/common/errors/internal');
 const RouteMatcher = require('../../modules/common/services/router/matcher');
-const { send, validateBody, validatePath, validateQuery } = require('./../../modules/common/services/controller');
+const { validateBody, validatePath, validateQuery, wrapResponse } = require('./../../modules/common/services/controller');
 const { validateSecurity } = require('./../../modules/security/services/controller');
 const compose = require('./compose');
 
-module.exports = function(config, controllers, plugins = []) {
+module.exports = function(config, options = {}) {
     // https://swagger.io/docs/specification/about/
+    const { plugins = [], prefix = "" } = options;
 
     let api = {};
     const parser = new SwaggerParser();
@@ -54,7 +55,7 @@ module.exports = function(config, controllers, plugins = []) {
     const performRequest = (req, res, next) => {
         const middleware = (req, res, next) => {
             for (let path in api.paths) {
-                if (path && RouteMatcher.match(req, path)) {
+                if (path && RouteMatcher.match(req, path, prefix)) {
                     const route = api.paths[path][req.method.toLowerCase()];
 
                     if (!route) {
@@ -65,28 +66,19 @@ module.exports = function(config, controllers, plugins = []) {
                         throw new InternalError('Open API path need operationId.');
                     }
 
-                    req.route = route;
-                    req.route.path = path;
+                    wrapResponse(req, res, route);
 
                     events.emit(`before:${route.operationId}`, req, res, next);
 
                     if (api.components.securitySchemes && route.security) {
-                        validateSecurity(req, res, api.components.securitySchemes, events);
+                        validateSecurity(req, res, api.components.securitySchemes, route.security, events);
                     }
 
-                    validatePath(req);
-                    validateQuery(req);
-                    validateBody(req);
+                    validatePath(req, route);
+                    validateQuery(req, route);
+                    validateBody(req, route);
 
                     events.emit(route.operationId, req, res, next);
-
-                    if (
-                        !res.writableEnded &&
-                        typeof controllers[route.operationId] === 'function'
-                    ) {
-                        controllers[route.operationId](req, res, next);
-                    }
-
                     events.emit(`after:${route.operationId}`, req, res, next);
 
                     return;
@@ -100,12 +92,17 @@ module.exports = function(config, controllers, plugins = []) {
     };
 
     return {
-        request(req, res, next) {
+        middleware(req, res, next) {
             try {
                 performRequest(req, res, next);
             } catch (e) {
                 console.error(e);
-                send(req, res, { message: String(e), code: e.code || 500 } , e.code || 500, e.message);
+
+                res.statusCode = e.code || 500;
+                res.statusMessage = e.message;
+                res.setHeader('Content-Type', 'application/json');
+                res.write(JSON.stringify({ message: String(e), code: e.code || 500 }));
+                res.end();
             }
         },
 

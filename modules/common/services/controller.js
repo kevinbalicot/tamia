@@ -7,55 +7,65 @@ const BadRequestError = require('./../errors/bad-request');
 
 module.exports = {
     /**
-     * Generate response from route, status and mimetype
+     * Wrap res object to add send function
      *
      * @param {IncomingMessage} req
      * @param {ServerResponse} res
-     * @param {*} [data=null]
-     * @param {number} [status=200]
-     * @param {string|null} [statusMessage=null]
+     * @param {object} [schemas={}]
      */
-    send(req, res, data = null, status = 200, statusMessage = null) {
-        const route = req.route;
-        const response = route ? route.responses[status] : null;
+    wrapResponse(req, res, schemas = {}) {
+        Object.defineProperties(res, {
+            /**
+             * Generate response from route, status and mimetype
+             * @param {*} [data=null]
+             * @param {number} [status=200]
+             * @param {string|null} [statusMessage=null]
+             */
+            send: {
+                value: function (data = null, status = 200, statusMessage = null) {
+                    const response = schemas.responses ? schemas.responses[status] : null;
+                    const mimetype = JSON_MIMETYPE;
 
-        let mimetype = JSON_MIMETYPE;
-        let model = data;
-        if (response && response.content) {
-            //if (req.headers['accept'] && req.headers['accept'] !== '*/*') {
-            //    mimetype = req.headers['accept'];
-            //}
+                    let model = data;
+                    if (response && response.content) {
+                        //if (req.headers['accept'] && req.headers['accept'] !== '*/*') {
+                        //    mimetype = req.headers['accept'];
+                        //}
 
-            //if (req.headers['accept'] && !response.content[mimetype]) {
-            //    throw new BadRequestError('Not Acceptable', 406);
-            //}
+                        //if (req.headers['accept'] && !response.content[mimetype]) {
+                        //    throw new BadRequestError('Not Acceptable', 406);
+                        //}
 
-            const content = response.content[mimetype];
-            if (content.schema.type === 'object') {
-                model = createFromModel(data, content.schema, true);
-            } else if (content.schema.type === 'array' && Array.isArray(data)) {
-                model = data.map(item => createFromModel(item, content.schema.items, true));
+                        const content = response.content[mimetype];
+                        if (content.schema.type === 'object') {
+                            model = createFromModel(data, content.schema, true);
+                        } else if (content.schema.type === 'array' && Array.isArray(data)) {
+                            model = data.map(item => createFromModel(item, content.schema.items, true));
+                        }
+                    }
+
+                    writer.write(res, model, mimetype, status, statusMessage);
+
+                    res.end();
+                }
             }
-        }
-
-        writer.write(res, model, mimetype, status, statusMessage);
-
-        res.end();
+        })
     },
 
     /**
      * Validate request body
      *
      * @param {IncomingMessage} req
+     * @param {object} [schemas={}]
      */
-    validateBody(req) {
-        const requestBody = req.route.requestBody;
+    validateBody(req, schemas = {}) {
+        const requestBody = schemas.requestBody;
         const contentType = req.headers['content-type'];
         let body = null;
 
-        if (requestBody && contentType) {
+        if (requestBody) {
             if (!requestBody.content[contentType]) {
-                throw new BadRequestError(`"${contentType}" request body doesnt exists`);
+                throw new BadRequestError(`Bad content type, please use ${Object.keys(requestBody.content).join()}`);
             }
 
             body = validator.validate(req.body, requestBody.content[contentType].schema);
@@ -68,11 +78,12 @@ module.exports = {
      * Validate req parameters from path schema
      *
      * @param {IncomingMessage} req
+     * @param {object} [schemas={}]
      */
-    validatePath(req) {
+    validatePath(req, schemas = {}) {
         if (req.params) {
             const schemaModel = { properties: {} };
-            (req.route.parameters || [])
+            (schemas.parameters || [])
                 .filter(parameter => parameter.in === 'path')
                 .forEach(({ name, schema, required }) => schemaModel.properties[name] = { ...schema, required });
 
@@ -84,11 +95,12 @@ module.exports = {
      * Validate req parameters from query schema
      *
      * @param {IncomingMessage} req
+     * @param {object} [schemas={}]
      */
-    validateQuery(req) {
+    validateQuery(req, schemas = {}) {
         if (req.query) {
             const schemaModel = { properties: {} };
-            (req.route.parameters || [])
+            (schemas.parameters || [])
                 .filter(parameter => parameter.in === 'query')
                 .forEach(({ name, schema, required }) => schemaModel.properties[name] = { ...schema, required });
 
