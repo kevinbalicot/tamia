@@ -1,5 +1,5 @@
 const assert = require('assert');
-const service = require('./../../../services/validators/string');
+const service = require('../../../../../../yion/validators/string');
 
 describe('String validator service', () => {
     describe('validate()', () => {

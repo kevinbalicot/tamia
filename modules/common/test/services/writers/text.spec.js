@@ -1,6 +1,6 @@
 const http = require('http');
 const assert = require('assert');
-const writer = require('./../../../services/writers/text');
+const writer = require('../../../../../../yion/api/writers/text');
 
 describe('Text Writer service', () => {
     describe('write()', () => {

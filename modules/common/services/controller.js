@@ -1,8 +1,8 @@
 const { JSON_MIMETYPE } = require('./http');
-const { createFromModel } = require('./factory');
+const { createFromModel } = require('../../../../yion/api/factory');
 
-const writer = require('./writers/writer');
-const validator = require('./validators/validator');
+const writer = require('../../../../yion/api/writers/writer');
+const validator = require('../../../../yion/validators/validator');
 const BadRequestError = require('./../errors/bad-request');
 
 module.exports = {

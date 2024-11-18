@@ -1,6 +1,6 @@
 const assert = require('assert');
 const BadRequestError = require('./../../../errors/bad-request');
-const { validate } = require('./../../../services/validators/validator');
+const { validate } = require('../../../../../../yion/validators/validator');
 
 describe('Validator service', () => {
     describe('validate()', () => {

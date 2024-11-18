@@ -1,5 +1,5 @@
 const assert = require('assert');
-const service = require('./../../../services/validators/integer');
+const service = require('../../../../../../yion/validators/integer');
 
 describe('Integer validator service', () => {
     describe('validate()', () => {

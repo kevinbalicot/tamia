@@ -1,5 +1,5 @@
 const assert = require('assert');
-const factory = require('./../../services/factory');
+const factory = require('../../../../../yion/api/factory');
 
 describe('Factory service', () => {
     describe('createFromModel()', () => {
